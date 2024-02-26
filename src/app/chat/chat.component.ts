@@ -1,9 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { ChatMessage } from './chat';
-import { ApiService } from './chat.service';
-import { SenderService } from './sender.service';
+import { Stomp, CompatClient, Message } from '@stomp/stompjs';
+import { ChatMessage } from './chat.model';
+
+
+
+
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -11,36 +14,35 @@ import { SenderService } from './sender.service';
 })
 export class ChatComponent  implements OnInit {
 message: string ='';
-socket$!: WebSocketSubject<any>;
-chatMessages: ChatMessage[] = [];
-sender: string='';
+stompClient!: CompatClient;
+
+
 
   
 
-constructor(private apiService: ApiService, private senderService: SenderService) {}
+constructor() {}
 
 ngOnInit() {
-  this.sender = this.senderService.sender;
-  this.socket$ = webSocket('ws://localhost:8003/api/chat'); 
- 
-  this.socket$.subscribe(
-    message => {
-      // Handle incoming messages
-      this.chatMessages.push(message);
-    },
-    error => {
-      // Handle WebSocket error
-    }
-  );
+  this.initializeWebSocketConnection();
 }
 
-sendMessage(): void {
+initializeWebSocketConnection() {
+  const socket = new WebSocket('ws://localhost:8003/api/chat'); // Update with your WebSocket endpoint
+
+  this.stompClient = Stomp.over(socket);
+  this.stompClient.connect({}, () => {
+    this.stompClient.subscribe('/topic/chat', (message: Message) => {
+      const newMessage: ChatMessage = JSON.parse(message.body);
+      // Handle incoming message
+    });
+  });
+}
+
+sendMessage() {
   const chatMessage: ChatMessage = {
-    sender: this.sender,
     content: this.message
   };
-
-  this.socket$.next(chatMessage);
-  this.message = '';
+  this.stompClient.send('/app/chat', {}, JSON.stringify(chatMessage));
+  this.message = ''; // Clear the input field
 }
 }

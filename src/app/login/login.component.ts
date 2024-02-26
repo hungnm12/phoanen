@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { SenderService } from '../chat/sender.service';
+
 
 @Component({
   selector: 'app-login',
@@ -16,7 +16,7 @@ export class LoginComponent {
   sender: string =''
   token:String='';
   
-  constructor(private http: HttpClient, private router: Router, private senderService: SenderService) { } 
+  constructor(private http: HttpClient, private router: Router) { } 
   public async login(){
     
     const loginData = {
@@ -34,7 +34,7 @@ export class LoginComponent {
         alert("Login successfully!")
         // setTimeout(() =>{},2000)
         this.router.navigate(['chat']);
-        this.senderService.setSender(this.sender);
+       
        }
     } catch (error) {
       alert("The information does not correct")
