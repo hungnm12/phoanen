@@ -33,7 +33,7 @@ export class LoginComponent {
        if(this.token!= null ||this.token!=''){
         alert("Login successfully!")
         // setTimeout(() =>{},2000)
-        this.router.navigate(['chat']);
+        this.router.navigate(['pro5']);
        
        }
     } catch (error) {

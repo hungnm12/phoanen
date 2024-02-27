@@ -27,11 +27,11 @@ ngOnInit() {
 }
 
 initializeWebSocketConnection() {
-  const socket = new WebSocket('ws://localhost:8003/api/chat'); // Update with your WebSocket endpoint
+  const socket = new WebSocket('ws://localhost:8003/api/chat'); 
 
   this.stompClient = Stomp.over(socket);
   this.stompClient.connect({}, () => {
-    this.stompClient.subscribe('/topic/chat', (message: Message) => {
+    this.stompClient.subscribe('/ws/chat', (message: Message) => {
       const newMessage: ChatMessage = JSON.parse(message.body);
       // Handle incoming message
     });
@@ -42,7 +42,7 @@ sendMessage() {
   const chatMessage: ChatMessage = {
     content: this.message
   };
-  this.stompClient.send('/app/chat', {}, JSON.stringify(chatMessage));
+  this.stompClient.send('/ws-app/chat', {}, JSON.stringify(chatMessage));
   this.message = ''; // Clear the input field
 }
 }

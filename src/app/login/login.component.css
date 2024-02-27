@@ -1,9 +1,13 @@
+
 #right {
     height: 100%;
     width: 640px;
     float: right;
     display: flex;
     flex-direction: column;
+    background-image: url("../../assets/photo/dc-bg.jpg");
+    background-attachment: center;
+    
 }
 
 #right h3 {
